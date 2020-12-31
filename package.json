@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "dev": "node ."
+  },
+  "dependencies": {
+    "@google-cloud/pubsub": "^2.7.0",
+    "googleapis": "39"
+  }
+}
