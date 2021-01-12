@@ -1,7 +1,7 @@
 const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
-const { Notifications } = require("./Gmail");
+const { Notifications, ListMessages, EspecicMessage } = require("./Gmail");
 const { listAlltopics, CreateTopic } = require("./GooglePubSub");
 
 // If modifying these scopes, delete token.json.
@@ -10,12 +10,17 @@ const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = "token.json";
-
+/**
+ * Lists the labels in the user's account.
+ *
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
 // Load client secrets from a local file.
+
 fs.readFile("credentials.json", (err, content) => {
   if (err) return console.log("Error loading client secret file:", err);
   // Authorize a client with credentials, then call the Gmail API.
-  authorize(JSON.parse(content), listAlltopics, listLabels);
+  authorize(JSON.parse(content), ListMessages);
 });
 
 /**
@@ -71,11 +76,6 @@ function getNewToken(oAuth2Client, callback) {
   });
 }
 
-/**
- * Lists the labels in the user's account.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
 function listLabels(auth) {
   const gmail = google.gmail({ version: "v1", auth });
   gmail.users.labels.list(
@@ -88,7 +88,9 @@ function listLabels(auth) {
       if (labels.length) {
         console.log("Labels:");
         labels.forEach((label) => {
-          console.log(`- ${label.name}`);
+          console.log(`name- ${label.name}`);
+          console.log(`id - ${label.id}`);
+          console.log("\n");
         });
       } else {
         console.log("No labels found.");
