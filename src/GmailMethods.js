@@ -25,7 +25,7 @@ class Gmail {
       }
     );
   }
-  listMessages() {
+  listMessages(token) {
     this.gmail.users.messages.list(
       {
         userId: "me",
@@ -38,13 +38,13 @@ class Gmail {
       }
     );
   }
-  async Message() {
+  async message() {
     const message = await this.gmail.users.messages.get({
       userId: "me",
-      id: "176f41a8b9719fe3",
+      id: "176fc3808811443b",
     });
 
-    console.log(message.data);
+    return message.data;
   }
   listLabels() {
     this.gmail.users.labels.list(

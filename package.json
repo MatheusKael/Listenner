@@ -1,9 +1,13 @@
 {
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "nodemon src/index.js"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^2.7.0",
-    "googleapis": "39"
+    "googleapis": "39",
+    "node-gtts": "^2.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
