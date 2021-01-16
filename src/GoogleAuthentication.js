@@ -5,6 +5,11 @@ const path = require("path");
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
+async function Authentication(token, content) {
+  const oAuth2Client = await authorize(JSON.parse(content), token);
+
+  return oAuth2Client;
+}
 async function authorize(credentials, TOKEN_PATH) {
   const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
@@ -51,4 +56,4 @@ function getNewToken(oAuth2Client, TOKEN_PATH) {
   });
 }
 
-module.exports = authorize;
+module.exports = Authentication;
