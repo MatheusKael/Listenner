@@ -10,23 +10,18 @@ class Gmail {
       return res.data;
     });
   }
-  notifications() {
-    this.gmail.users.watch(
-      {
-        userId: "me",
-        requestBody: {
-          labelIds: ["INBOX"],
-          topicName: "projects/listenner/topics/free",
-        },
+  async notifications() {
+    const response = await this.gmail.users.watch({
+      userId: "me",
+      requestBody: {
+        labelIds: ["INBOX"],
+        topicName: "projects/listenner/topics/free",
       },
-      (err, res) => {
-        if (err) return console.log(err);
-        return res.data;
-      }
-    );
+    });
+    return response;
   }
-  listMessages(token) {
-    const response = this.gmail.users.messages.list({
+  async listMessages(token) {
+    const response = await this.gmail.users.messages.list({
       userId: "me",
       labelIds: ["INBOX", "Label_1669741166474549732"],
       oauth_token: token,
