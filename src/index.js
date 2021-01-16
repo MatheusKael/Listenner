@@ -1,28 +1,26 @@
 const fs = require("fs");
-const Gmail = require("./GmailMethods").Gmail;
-const Topics = require("./GooglePubSub").Topics;
-const authorize = require("./GoogleAuthentication");
 const path = require("path");
 const Gtts = require("node-gtts")("pt-br");
-const audiospath = path.join(__dirname, "..", "audios", "Audio.wav");
+
+const Authentication = require("./GoogleAuthentication");
+const LastMessage = require("./LastMessage").LastMessage;
 
 const TOKEN_PATH = "token.json";
-
 const content = fs.readFileSync("credentials.json");
 
+const audiospath = path.join(__dirname, "..", "audios", "Audio.wav");
+
 async function Init() {
-  const oAuth2Client = await authorize(JSON.parse(content), TOKEN_PATH);
+  const Oauth = await Authentication(TOKEN_PATH, content);
 
-  const topics = new Topics();
-  const gmail = new Gmail(oAuth2Client);
+  const lastMessage = await LastMessage(Oauth);
 
-  const messageData = await gmail.message();
+  const converted = Base64ToUtf(lastMessage);
 
-  const messageContent = messageData.payload.parts[0].body.data;
+  console.log(converted);
+}
 
-  const buff = Buffer.from(messageContent, "base64");
-  const decoded = buff.toString("utf-8");
-
+function DoMp4(decoded) {
   Gtts.save(audiospath, decoded, (err, result) => {
     if (err) return console.log(err);
     console.log("DONE");
@@ -30,4 +28,10 @@ async function Init() {
   });
 }
 
+function Base64ToUtf(content) {
+  const buff = Buffer.from(content, "base64");
+  const decoded = buff.toString("utf-8");
+
+  return decoded;
+}
 Init();

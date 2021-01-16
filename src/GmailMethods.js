@@ -7,7 +7,7 @@ class Gmail {
   profile() {
     this.gmail.users.getProfile({ userId: "me" }, (err, res) => {
       if (err) return console.log("Ocorreu um erro: " + err);
-      console.log(res.data);
+      return res.data;
     });
   }
   notifications() {
@@ -21,27 +21,22 @@ class Gmail {
       },
       (err, res) => {
         if (err) return console.log(err);
-        console.log(res.data);
+        return res.data;
       }
     );
   }
   listMessages(token) {
-    this.gmail.users.messages.list(
-      {
-        userId: "me",
-        labelIds: ["INBOX", "Label_1669741166474549732"],
-        oauth_token: token,
-      },
-      (err, res) => {
-        if (err) return console.log(err);
-        console.log(res.data.messages);
-      }
-    );
+    const response = this.gmail.users.messages.list({
+      userId: "me",
+      labelIds: ["INBOX", "Label_1669741166474549732"],
+      oauth_token: token,
+    });
+    return response;
   }
-  async message() {
+  async message(id) {
     const message = await this.gmail.users.messages.get({
       userId: "me",
-      id: "176fc3808811443b",
+      id: `${id}`,
     });
 
     return message.data;
