@@ -16,27 +16,33 @@ async function Init() {
 
   const lastMessage = await LastMessage(Oauth);
 
-  const converted = Base64ToUtf(lastMessage);
+  // const converted = Base64ToUtf(lastMessage);
   // console.log(converted);
 
   //testing
-  await ListenMessages("projects/listenner/subscriptions/teste", 10);
 
-  setTimeout(async () => {
-    const gmail = new Gmail(Oauth);
-    const [response] = messagesIDs.map(async (messageID) => {
-      console.log(await messageID);
-      const response = await gmail.message(await messageID);
-      console.log(response);
-      return response;
-    });
-    console.log(await response);
-  }, 11 * 1000);
+  const teste = await ListenMessages(
+    "projects/listenner/subscriptions/teste",
+    10
+  );
 
+  console.log("Listenner was " + (await teste) + "ed");
+  console.log(await ReadMessage(Oauth));
   // CheckNewNotification(Oauth);
 }
 
 //toDo: Refactor ->
+
+async function ReadMessage(auth) {
+  const gmail = new Gmail(auth);
+  const [response] = messagesIDs.map(async (messageID) => {
+    console.log(await messageID);
+    const response = await gmail.message(await messageID);
+    console.log(response);
+    return response;
+  });
+  console.log(await response);
+}
 
 async function CheckNewNotification(auth) {
   const gmail = new Gmail(auth);
@@ -53,10 +59,4 @@ function DoMp4(decoded) {
   });
 }
 
-function Base64ToUtf(content) {
-  const buff = Buffer.from(content, "base64");
-  const decoded = buff.toString("utf-8");
-
-  return decoded;
-}
 Init();

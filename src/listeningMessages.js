@@ -1,16 +1,17 @@
 const Pubsub = require("./googlePubSub").Pubsub;
+const readline = require("readline");
 
 const messagesIDs = [];
 
-const messageHandler = (message) => {
-  console.log(`Received message ${message.id}:`);
-  console.log(`\tData: ${message.data}`);
-  console.log(`\tAttributes: ${message.attributes}`);
+function messageHandler(message) {
+  // console.log(`Received message ${message.id}:`);
+  // console.log(`\tData: ${message.data}`);
+  // console.log(`\tAttributes: ${message.attributes}`);
   messagesIDs.push(message.id);
   // "Ack" (acknowledge receipt of) the message
   message.ack();
   return messagesIDs;
-};
+}
 async function ListenMessages(SubscriptionName, timeout) {
   const pubsub = new Pubsub();
   const [subscriptions] = await pubsub.listSubscriptions();
@@ -29,13 +30,29 @@ async function ListenMessages(SubscriptionName, timeout) {
   const subscription = await pubsub.subscription(name);
 
   // console.log(subscription);
-
-  let messageCount = 0;
+  const lockers = [];
   subscription.on("message", messageHandler);
-  setTimeout(() => {
-    subscription.removeListener("message", messageHandler);
-    console.log(`${messageCount} message(s) received.`);
-  }, timeout * 1000);
+
+  const response = new Promise((resolve, reject) => {
+    console.log("Type 'end' to kill the connection");
+
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    rl.question("Answer: ", (answer) => {
+      if (answer === "end") {
+        subscription.removeListener("message", messageHandler);
+        rl.close();
+        console.log("done... ");
+        resolve(answer);
+      } else {
+        return console.log("Try again");
+      }
+    });
+  });
+
+  return response;
 }
 
 module.exports = { ListenMessages, messagesIDs };
